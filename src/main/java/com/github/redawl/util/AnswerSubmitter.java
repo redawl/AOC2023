@@ -24,7 +24,7 @@ public class AnswerSubmitter {
     static{
         properties = new Properties();
         try {
-            properties.load(new FileInputStream("/aoc.properties"));
+            properties.load(new FileInputStream("src/main/resources/aoc.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -37,30 +37,34 @@ public class AnswerSubmitter {
         LEVEL_TWO
     }
 
-    public static <T> void submitAnswer(T answer, LEVEL level, Predicate<T> criteria){
+    public static <T> void submitAnswer(T answer, int day, LEVEL level, Predicate<T> criteria){
         if(criteria.test(answer)){
-            submit(answer, level);
+            submit(answer, day, level);
+        } else {
+            logger.error("{} did not pass the specified criteria", answer);
         }
     }
 
-    private static <T> void submit(T answer, LEVEL level){
+    private static <T> void submit(T answer, int day, LEVEL level){
         URI uri = null;
 
         try {
-            uri = new URI("https://adventofcode.com/2023/day/3/answer");
+            uri = new URI("https://adventofcode.com/2023/day/"+ day + "/answer");
         } catch (URISyntaxException ex){
             logger.error("????");
         }
 
-        HttpClient client = HttpClient.newHttpClient();
+        final String postData = String.format("level=%d&answer=%s", level.ordinal() + 1, answer.toString());
 
-        HttpRequest request = HttpRequest.newBuilder()
+        final HttpClient client = HttpClient.newHttpClient();
+
+        final HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .headers(
                     "Cookie", properties.getProperty("answersubmitter.cookie"),
                         "Content-Type", "application/x-www-form-urlencoded"
                 )
-                .POST(HttpRequest.BodyPublishers.ofString(String.format("level=\"%d\"&answer=%s", level.ordinal() + 1, answer.toString())))
+                .POST(HttpRequest.BodyPublishers.ofString(postData))
                 .build();
 
         HttpResponse<String> response = null;

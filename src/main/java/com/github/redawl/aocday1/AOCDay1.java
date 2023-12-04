@@ -66,16 +66,16 @@ public class AOCDay1 {
             int end = mapToInt(matcher.group(2)).orElseThrow();
 
             if(beginning < 0){
-                return Integer.parseInt(String.valueOf(end) + end);
+                return (end * 10) + end;
             }
-            return Integer.parseInt(String.valueOf(beginning) + end);
+            return (beginning * 10) + end;
         }
 
         Matcher matcher1 = INT_PATTERN_2_V2.matcher(str);
         if(matcher1.find()){
             int only = mapToInt(matcher1.group(1)).orElseThrow();
 
-            return Integer.parseInt(String.valueOf(only) + only);
+            return (only * 10) + only;
         }
 
         throw new RuntimeException("Not enough matches!");

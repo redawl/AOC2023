@@ -1,9 +1,8 @@
 package com.github.redawl.aocday3;
 
-import com.github.redawl.util.AnswerSubmitter;
+import com.github.redawl.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.github.redawl.util.FileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,8 +70,8 @@ public class AOCDay3 {
         return finalScore;
     }
 
-    public static long challenge2(List<String> strings){
-        long finalScore = 0;
+    public static int challenge2(List<String> strings){
+        int finalScore = 0;
 
         for(int lineIndex = 0; lineIndex < strings.size(); lineIndex++){
             String line = strings.get(lineIndex);
@@ -119,7 +118,7 @@ public class AOCDay3 {
                     }
 
                     if(ints.size() == 2){
-                        finalScore += ((long) ints.get(0)) * ((long)ints.get(1));
+                        finalScore += ints.get(0) * ints.get(1);
                     }
                 }
             }
@@ -131,11 +130,11 @@ public class AOCDay3 {
     public static void main(String [] args){
         List<String> strings = fileUtils.getFileContents("challenge3.txt").toList();
 
-        int answer1 = challenge1(strings);
+        final int answer1 = challenge1(strings);
 
         logger.info("Answer 1: {}", answer1);
 
-        long answer2 = challenge2(strings);
+        final int answer2 = challenge2(strings);
 
         logger.info("Answer 2: {}", answer2);
     }
