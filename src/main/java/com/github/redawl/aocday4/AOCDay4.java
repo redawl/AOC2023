@@ -1,9 +1,8 @@
 package com.github.redawl.aocday4;
 
-import com.github.redawl.util.AnswerSubmitter;
+import com.github.redawl.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.github.redawl.util.FileUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class AOCDay4 {
     private static final Logger logger = LoggerFactory.getLogger(AOCDay4.class);
