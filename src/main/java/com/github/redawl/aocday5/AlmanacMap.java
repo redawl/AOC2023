@@ -7,7 +7,19 @@ public class AlmanacMap {
 
     private final List<Range> seedMapping = new ArrayList<>();
 
-    private record Range(long destination, long source, long range) {
+    protected static class Range {
+        long destinationStart;
+        long destinationEnd;
+        long sourceStart;
+
+        long sourceEnd;
+
+        Range(long destinationStart, long destinationEnd, long sourceStart, long sourceEnd){
+            this.destinationStart = destinationStart;
+            this.destinationEnd = destinationEnd;
+            this.sourceStart = sourceStart;
+            this.sourceEnd = sourceEnd;
+        }
     }
 
     private AlmanacMap (){}
@@ -17,17 +29,36 @@ public class AlmanacMap {
     }
 
     public void addMapping(long destinationCategory, long sourceCategory, long range){
-        seedMapping.add(new Range(destinationCategory, sourceCategory, range));
+        seedMapping.add(
+                new Range(destinationCategory, destinationCategory + range - 1, sourceCategory, sourceCategory + range - 1));
     }
 
     public long map(long input){
         for(Range range: seedMapping){
-            if(input <= range.source + range.range - 1 && input >= range.source){
-                return range.destination + (input - range.source);
+            if(input <= range.sourceEnd && input >= range.sourceStart){
+                return range.destinationStart + (input - range.sourceStart);
             }
         }
 
         return input;
+    }
+
+    public void mergeMaps(AlmanacMap incoming){
+        List<Range> incomingRanges = incoming.seedMapping;
+
+        while(!incomingRanges.isEmpty()){
+            Range incomingRange = incomingRanges.get(0);
+
+            for(Range existingRange: seedMapping){
+                // If ranges match up perfectly
+                if(existingRange.destinationStart == incomingRange.sourceStart && existingRange.destinationEnd == incomingRange.sourceEnd){
+                    existingRange.destinationStart = incomingRange.destinationStart;
+                    existingRange.destinationEnd = incomingRange.destinationEnd;
+                }
+            }
+
+            incomingRanges.remove(incomingRange);
+        }
     }
 
     public long map(long rangeStart, long rangeLength){
@@ -35,8 +66,8 @@ public class AlmanacMap {
 
         // First find all ranges that overlap with target range
         for(Range range: seedMapping){
-            if((rangeStart >= range.source && rangeStart <= range.source + range.range - 1)
-                || (range.source >= rangeStart && range.source <= rangeStart + rangeLength - 1)){
+            if((rangeStart >= range.sourceStart && rangeStart <= range.sourceEnd)
+                || (range.sourceStart >= rangeStart && range.sourceStart <= rangeStart + rangeLength - 1)){
                 validRanges.add(range);
             }
         }
@@ -56,10 +87,14 @@ public class AlmanacMap {
     }
 
     private long smallestMapping(long rangeStart, long rangeLength, Range targetRange){
-        if(targetRange.destination >= rangeStart && targetRange.destination <= rangeStart + rangeLength - 1){
-            return targetRange.destination;
+        if(targetRange.destinationStart >= rangeStart && targetRange.destinationStart <= rangeStart + rangeLength - 1){
+            return targetRange.destinationStart;
         }
 
-        return targetRange.destination + (rangeStart - targetRange.source);
+        return targetRange.destinationStart + (rangeStart - targetRange.sourceStart);
+    }
+
+    private List<Range> getSeedMapping(){
+        return seedMapping;
     }
 }
