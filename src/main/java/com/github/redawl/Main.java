@@ -5,6 +5,8 @@ import com.github.redawl.aocday2.AOCDay2;
 import com.github.redawl.aocday3.AOCDay3;
 import com.github.redawl.aocday4.AOCDay4;
 import com.github.redawl.aocday5.AOCDay5;
+import com.github.redawl.aocday6.AOCDay6;
+import com.github.redawl.aocday7.AOCDay7;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,5 +15,7 @@ public class Main {
         AOCDay3.main(args);
         AOCDay4.main(args);
         AOCDay5.main(args);
+        AOCDay6.main(args);
+        AOCDay7.main(args);
     }
 }
