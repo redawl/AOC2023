@@ -44,6 +44,7 @@ public class CardHand {
             }
 
             Collection<Integer> values = numCards.values();
+            int numPairs = values.stream().filter(x -> x == 2).toList().size();
             if (values.contains(5)) {
                 type = HandType.FIVE_OF_A_KIND;
             } else if (values.contains(4)) {
@@ -52,7 +53,7 @@ public class CardHand {
                 type = HandType.FULL_HOUSE;
             } else if (values.contains(3)) {
                 type = HandType.THREE_OF_A_KIND;
-            } else if (values.stream().filter(x -> x == 2).toList().size() == 2) {
+            } else if ( numPairs == 2) {
                 type = HandType.TWO_PAIR;
             } else if (values.contains(2)) {
                 type = HandType.ONE_PAIR;

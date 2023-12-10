@@ -93,16 +93,12 @@ public class AOCDay5 {
     public static void main(String [] args){
         List<String> maps = fileUtils.getFileContents("challenge5.txt", "\n\n").toList();
 
-        long start = System.currentTimeMillis();
         long answer1 = challenge1(maps);
-        long end = System.currentTimeMillis();
 
-        logger.info("Answer 1: {} - {} ms", answer1, end - start);
+        logger.info("Answer 1: {}", answer1);
 
-        start = System.currentTimeMillis();
         long answer2 = challenge2(maps);
-        end = System.currentTimeMillis();
 
-        logger.info("Answer 2: {} - {} ms", answer2, end - start);
+        logger.info("Answer 2: {}", answer2);
     }
 }
