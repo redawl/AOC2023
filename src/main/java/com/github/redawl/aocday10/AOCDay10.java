@@ -1,17 +1,15 @@
 package com.github.redawl.aocday10;
 
 import com.github.redawl.util.Coordinate;
+import com.github.redawl.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.github.redawl.util.FileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
 public class AOCDay10 {
     private static final Logger logger = LoggerFactory.getLogger(AOCDay10.class);
@@ -163,7 +161,6 @@ public class AOCDay10 {
     }
 
     public static int challenge2(List<String> pipeRows){
-        // TODO: Implement
         List<char []> pieces = new ArrayList<>();
 
         for(String pipeRow: pipeRows){
@@ -203,17 +200,53 @@ public class AOCDay10 {
                 .ifPresent(list::set);
 
         List<Coordinate> visitedCorners = list.get().stream().filter(c -> isCornerPiece(pieces.get(c.getY())[c.getX()])).toList();
-        print(list.get(), pieces);
-        int numerator = 0;
 
-        for(int i = 0; i < visitedCorners.size(); i++){
-
-            Coordinate first = visitedCorners.get(i);
-            Coordinate second = visitedCorners.get(i % visitedCorners.size());
-            numerator += (first.getX() * second.getY()) - (first.getY() * second.getX());
+        int count = 0;
+        for(int j = 0; j < pieces.size(); j++){
+            for(int i = 0; i < pieces.get(0).length; i++){
+                if(!list.get().contains(Coordinate.of(i, j)) && isPointInPolygon(Coordinate.of(i, j), visitedCorners)){
+                    count++;
+                }
+            }
         }
 
-        return numerator / 2;
+
+        return count;
+    }
+
+    // Adapted from https://stackoverflow.com/a/16391873
+    private static boolean isPointInPolygon( Coordinate p, List<Coordinate> polygon )
+    {
+        double minX = polygon.get(0).getX();
+        double maxX = polygon.get(0).getX();
+        double minY = polygon.get(0).getY();
+        double maxY = polygon.get(0).getY();
+        for ( int i = 1 ; i < polygon.size() ; i++ )
+        {
+            Coordinate q = polygon.get(i);
+            minX = Math.min( q.getX(), minX );
+            maxX = Math.max( q.getX(), maxX );
+            minY = Math.min( q.getY(), minY );
+            maxY = Math.max( q.getY(), maxY );
+        }
+
+        if ( p.getX() < minX || p.getX() > maxX || p.getY() < minY || p.getY() > maxY )
+        {
+            return false;
+        }
+
+        // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+        boolean inside = false;
+        for ( int i = 0, j = polygon.size() - 1 ; i < polygon.size() ; j = i++ )
+        {
+            if ( ( polygon.get(i).getY() > p.getY() ) != ( polygon.get(j).getY() > p.getY() ) &&
+                    p.getX() < ( polygon.get(j).getX() - polygon.get(i).getX() ) * ( p.getY() - polygon.get(i).getY() ) / ( polygon.get(j).getY() - polygon.get(i).getY() ) + polygon.get(i).getX() )
+            {
+                inside = !inside;
+            }
+        }
+
+        return inside;
     }
 
     private static boolean isCornerPiece(char piece){
@@ -221,8 +254,8 @@ public class AOCDay10 {
     }
 
     private static void print(List<Coordinate> visited, List<char []> pieces){
-        for(int j = pieces.size() - 1; j >= 0; j--){
-            for(int i = pieces.get(0).length - 1; i >= 0; i--){
+        for(int j = 0; j < pieces.size(); j++){
+            for(int i = 0; i < pieces.get(0).length; i++){
                 if(visited.contains(Coordinate.of(i, j))){
                     System.out.print(pieces.get(j)[i]);
                 } else {
@@ -233,32 +266,11 @@ public class AOCDay10 {
         }
     }
 
-    private static boolean oneIsMultipleOfOther(int x, int y){
-        if(x < 0 || y < 0) throw new RuntimeException("x and y cannot be negative");
-
-        if(x == y) return true;
-
-        if(x > y){
-            int multiple = y;
-            while(x > multiple){
-                multiple += y;
-            }
-
-            return x == multiple;
-        }
-
-        int multiple = x;
-        while(y > multiple){
-            multiple += x;
-        }
-
-        return y == multiple;
-    }
-
     private static Optional<List<Coordinate>> getVisited(int startX, int startY, int startMoveX, int startMoveY, List<char []> pieces){
         List<Coordinate> visited = new ArrayList<>();
         Coordinate curr = Coordinate.of(startX + startMoveX, startY + startMoveY);
         Coordinate move = Coordinate.of(startMoveX, startMoveY);
+        visited.add(Coordinate.of(curr.getX(), curr.getY()));
         boolean done = false;
         while(!done){
             Coordinate newCoordinates = getNextMove(pieces.get(curr.getY())[curr.getX()], move)
@@ -289,7 +301,6 @@ public class AOCDay10 {
     }
 
     public static void main(String [] args){
-        // TODO: Set up initial state
         List<String> pipes = fileUtils.getFileContents("challenge10.txt").toList();
 
         int answer1 = challenge1(pipes);
