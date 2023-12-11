@@ -253,6 +253,7 @@ public class AOCDay10 {
         return piece == 'L' || piece == 'F' || piece == 'J' || piece == '7';
     }
 
+    @SuppressWarnings("unused")
     private static void print(List<Coordinate> visited, List<char []> pieces){
         for(int j = 0; j < pieces.size(); j++){
             for(int i = 0; i < pieces.get(0).length; i++){
